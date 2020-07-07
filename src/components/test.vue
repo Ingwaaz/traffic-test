@@ -12,12 +12,12 @@
         <div class="container">
           <div class="content__question"
             v-for="(item, index) in questions"
-              :key="item.id"
+            :key="item.id"
           >
           <div class="question__title">
             {{item.section}}
           </div>
-            <div class="question__body">
+            <div class="question__body" ref="forSlide">
               <div class="tickets"
                 v-for="(ticket, index) in item.tickets"
                 :key="ticket.id"
@@ -31,15 +31,21 @@
               <div class="tickets__answers">
                 <div
                   class="answer"
-                  :key="answer.id"
                   v-for="answer in ticket.answers"
+                  :key="answer.id"
                 >
                   {{answer}}
                 </div>
               </div>
               <div class="tickets__answers_variable">
                 <span>Введите правильный ответ:</span>
-                <input type="text" min="0" max="4" maxlength="1" @change="viewAnswer(item, index, $event.target.value)">
+                <input
+                  type="text"
+                  min="0"
+                  max="4"
+                  maxlength="1"
+                  @change="viewAnswer(item, index, $event.target.value)"
+                >
               </div>
               <div class="tickets__hint">
                 <div class="hint__btn">
@@ -53,8 +59,20 @@
             </div>
             <div class="slider">
               <div class="slider__row">
-                <div class="slider__left" @click="slideToLeft(index)" v-show="activeSlides[index].activeSlide > 1">Предыдущий вопрос</div>
-                <div class="slider__right" @click="slideToRight(index)" v-show="activeSlides[index].activeSlide < 4">Следующий вопрос</div>
+                <div
+                  class="slider__left"
+                  @click="slideToLeft(index)"
+                  v-show="activeSlides[index].activeSlide> 1"
+                >
+                  Предыдущий вопрос
+                </div>
+                <div
+                  class="slider__right"
+                  @click="slideToRight(index)"
+                  v-show="activeSlides[index].activeSlide < 4"
+                >
+                  Следующий вопрос
+                </div>
               </div>
             </div>
           </div>
@@ -80,10 +98,11 @@
 
 <script>
 /* Компонент тестирования */
-import questions from './questions.json'
-import { mapActions } from 'vuex'
+import questions from "../questions.json";
+import { mapActions, mapState } from "vuex";
+
 export default {
-  name: 'Test',
+  name: "Test",
   data () {
     return {
       questions: [...questions],
@@ -91,147 +110,152 @@ export default {
       answers: [
         {
           sections: [
-            {ticket: ''},
-            {ticket: ''},
-            {ticket: ''},
-            {ticket: ''}
+            { ticket: "" },
+            { ticket: "" },
+            { ticket: "" },
+            { ticket: "" }
           ]
         },
         {
           sections: [
-            {ticket: ''},
-            {ticket: ''},
-            {ticket: ''},
-            {ticket: ''}
+            { ticket: "" },
+            { ticket: "" },
+            { ticket: "" },
+            { ticket: "" }
           ]
         },
         {
           sections: [
-            {ticket: ''},
-            {ticket: ''},
-            {ticket: ''},
-            {ticket: ''}
+            { ticket: "" },
+            { ticket: "" },
+            { ticket: "" },
+            { ticket: "" }
           ]
         },
         {
           sections: [
-            {ticket: ''},
-            {ticket: ''},
-            {ticket: ''},
-            {ticket: ''}
+            { ticket: "" },
+            { ticket: "" },
+            { ticket: "" },
+            { ticket: "" }
           ]
         },
         {
           sections: [
-            {ticket: ''},
-            {ticket: ''},
-            {ticket: ''},
-            {ticket: ''}
+            { ticket: "" },
+            { ticket: "" },
+            { ticket: "" },
+            { ticket: "" }
           ]
         }
       ],
+      readyAnswers: [],
       /* Массив активных подсказок */
       activeHints: [
-        {activeHint: false},
-        {activeHint: false},
-        {activeHint: false},
-        {activeHint: false},
-        {activeHint: false}
+        { activeHint: false },
+        { activeHint: false },
+        { activeHint: false },
+        { activeHint: false },
+        { activeHint: false }
       ],
       activeSlide: 1,
       /* Массив активных слайдов для удобного управления секциями */
       activeSlides: [
-        {activeSlide: 1},
-        {activeSlide: 1},
-        {activeSlide: 1},
-        {activeSlide: 1},
-        {activeSlide: 1}
+        { activeSlide: 1 },
+        { activeSlide: 1 },
+        { activeSlide: 1 },
+        { activeSlide: 1 },
+        { activeSlide: 1 }
       ]
-    }
+    };
   },
-  mounted () {
-    console.log(this.$store.state)
+  computed: {
+    ...mapState({
+      stateCurrentAnswers: state => state.currentAnswers
+    })
   },
   methods: {
-    ...mapActions(['setAnswersUser', 'setPoints']),
+    ...mapActions(["setAnswersUser", "setPoints"]),
+
     /* Подгружаем картинку */
     getImgUrl (image) {
-      return require('../assets/images/tickets/' + image)
+      return require("../assets/images/tickets/" + image);
     },
+
     slideToRight (index) {
-      let activeSession = document.getElementsByClassName('question__body')
+      let activeSession = this.$refs.forSlide;
+
       /* Делаем слайд вправо */
       if (this.activeSlides[index].activeSlide < 4) {
-        this.activeSlides[index].activeSlide = this.activeSlides[index].activeSlide + 1
-        activeSession[index].style.transform = `translateX(${'-100' * (this.activeSlides[index].activeSlide - 1) + '%'})`
+        this.activeSlides[index].activeSlide = this.activeSlides[index].activeSlide + 1;
+        activeSession[index].style.transform = `translateX(${ "-100" * (this.activeSlides[index].activeSlide - 1) + "%" })`;
+
         /* Закрываем подсказку */
-        this.activeHints[index].activeHint = false
-      } else if (this.activeSlides[index].activeSlide === 4) {
+        this.activeHints[index].activeHint = false;
+      } else {
         /* Возвращаем 1 слайд */
-        this.activeSlides[index].activeSlide = 1
-        activeSession[index].style.transform = `translateX(-0%)`
+        this.activeSlides[index].activeSlide = 1;
+        activeSession[index].style.transform = `translateX(-0%)`;
       }
     },
+
     slideToLeft (index) {
-      let activeSession = document.getElementsByClassName('question__body')
+      let activeSession = this.$refs.forSlide;
       /* Переменная для вычесления transform */
-      let rangeTransform = '-100'
+      let rangeTransform = "-100";
+
       if (this.activeSlides[index].activeSlide === 1) {
         /* Возвращаем 1 слайд */
-        this.activeSlides[index].activeSlide = 1
-        activeSession[index].style.transform = `translateX(-0%)`
+        this.activeSlides[index].activeSlide = 1;
+        activeSession[index].style.transform = `translateX(-0%)`;
       } else {
         /* Делаем слайд влево */
-        this.activeSlides[index].activeSlide = this.activeSlides[index].activeSlide - 1
-        activeSession[index].style.transform = `translateX(${rangeTransform * (this.activeSlides[index].activeSlide - 2) - '100' + '%'}`
+        this.activeSlides[index].activeSlide = this.activeSlides[index].activeSlide - 1;
+        activeSession[index].style.transform = `translateX(${ rangeTransform * (this.activeSlides[index].activeSlide - 2) - "100" + "%" }`;
+
         /* Закрываем подсказку */
-        this.activeHints[index].activeHint = false
+        this.activeHints[index].activeHint = false;
       }
     },
+
     viewAnswer (item, index, value) {
+      let arr = [];
       /* Записываем данные ответов в массив */
-      this.answers[item.id - 1].sections[index].ticket = value
-      let arr = []
+      this.answers[item.id - 1].sections[index].ticket = value;
       /* Получаем массив всех ответов */
       for (let i = 0; i < this.answers.length; i++) {
         for (let j = 0; j < this.answers[i].sections.length; j++) {
-          arr.push(this.answers[i].sections[j])
+          arr.push(this.answers[i].sections[j]);
         }
       }
-      /* Сохраняем результаты в state */
-      this.setAnswersUser({
-        answers: arr
-      })
+      /* Записываем подготовленный массив в date */
+      this.readyAnswers = arr;
     },
+
     checkingAnswer () {
-      /* Проверяем ответы */
-      let arr = []
-      /* Проходимся по массиву что бы добавить в массив результаты без вложений */
-      for (let i = 0; i < this.$store.state.answers.length; i++) {
-        arr.push(this.$store.state.answers[i].ticket)
-        /* Сравниваем результаты с правильными ответами */
-        for (let j = 0; j < this.$store.state.currentAnswers.length; j++) {
-          if (arr[i] !== this.$store.state.currentAnswers[i]) {
-            arr[i] = 'Не верно'
-          }
+      /* Сравниваем результаты с правильными ответами */
+      let arr = this.readyAnswers.map((el, index) => {
+        if (el.ticket !== this.stateCurrentAnswers[index]) {
+          el.ticket = "Не верно";
         }
-      }
+        return el.ticket;
+      });
       /* Вычисляем количество баллов */
-      let points = arr.filter((number) => {
-        return number > 0
-      })
+      let points = arr.filter(item => {
+        return item > 0;
+      });
       /* Обновляем результаты в state */
       this.setAnswersUser({
         answers: arr
-      })
+      });
       this.setPoints({
         points: points.length
-      })
+      });
       /* Переходим на страницу результатов */
-      this.$router.push('/test/result')
+      this.$router.push("/test/result");
     }
   }
-}
+};
 </script>
 
 <style>

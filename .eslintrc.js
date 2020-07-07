@@ -21,9 +21,23 @@ module.exports = {
   ],
   // add your custom rules here
   rules: {
-    // allow async-await
-    'generator-star-spacing': 'off',
-    // allow debugger during development
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off'
+    indent: 2,
+    "comma-dangle": ["error", "never"],
+    "quote-props": ["error", "as-needed"],
+    quotes: ["error", "double", { allowTemplateLiterals: true }],
+    "eol-last": ["error", "always"],
+    "no-plusplus": "off",
+    "template-curly-spacing": ["error", "always"],
+    "global-require": "off",
+    "import/no-dynamic-require": "off",
+    "arrow-parens": ["error", "as-needed"],
+    "prefer-destructuring": ["error", { object: false, array: false }],
+    "no-return-assign": "off",
+    "vue/attribute-hyphenation": "off",
+    "import/no-named-as-default": "off",
+    "function-paren-newline": "off",
+    "implicit-arrow-linebreak": "off",
+    "consistent-return": "off",
+    semi: ["error", "always"]
   }
 }

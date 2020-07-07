@@ -4,7 +4,7 @@
       <div class="container">
         <div class="result__col">
           <div class="result__points_count">
-            Вы набрали {{this.$store.state.points}} из {{complitePoints}} баллов
+            Вы набрали {{this.points}} из {{complitePoints}} баллов
           </div>
           <div class="result__complite">
             {{this.$store.state.points >= 18 ? 'Вы сдали тест' : 'Вы не сдали тест'}}
@@ -14,15 +14,19 @@
               <div class="list__title">
                 Ваши ответы
               </div>
-              <div class="list__item" v-for="(item, index) in this.$store.state.answers" :key="item.index">
+              <div
+                class="list__item"
+                v-for="(item, index) in this.answers"
+                :key="item.index"
+              >
                 {{(index + 1) + ':'}}<span>{{item}}</span>
               </div>
             </div>
           </div>
           <div class="result__row">
-            <div class="result__btn" @click="redirectToTest()">
-              Попробовать еще раз
-            </div>
+            <router-link :to="'/test'" class="result__btn">
+                Попробовать еще раз
+            </router-link>
           </div>
         </div>
       </div>
@@ -31,19 +35,22 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
+
 export default {
-  name: 'Result',
+  name: "Result",
   data () {
     return {
       complitePoints: 20
-    }
+    };
   },
-  methods: {
-    redirectToTest () {
-      this.$router.push('/test')
-    }
+  computed: {
+    ...mapState({
+      points: state => state.points,
+      answers: state => state.answers
+    })
   }
-}
+};
 </script>
 
 <style>
@@ -112,6 +119,7 @@ export default {
   background-color: #222;
   color: #fff;
   transition: .3s;
+  text-decoration: none;
   cursor: pointer;
 }
 .result__btn:hover {

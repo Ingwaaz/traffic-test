@@ -8,9 +8,13 @@
         Введите имя пользователя
       </div>
       <div class="welcome__user_name">
-        <input type="text" placeholder="Иван" v-model="userName">
+        <input
+          type="text"
+          placeholder="Иван"
+          v-model="userName"
+        >
       </div>
-      <div class="welcome__btn" @click="authorization(userName)">
+      <div class="welcome__btn" @click="authorization()">
           Начать тест
         </div>
     </div>
@@ -19,24 +23,24 @@
 
 <script>
 /* Компонент для авторизации пользователя */
-import { mapActions } from 'vuex'
+import { mapMutations } from "vuex";
 
 export default {
-  name: 'Welcome',
+  name: "Welcome",
   data () {
     return {
-      userName: ''
-    }
+      userName: ""
+    };
   },
   methods: {
-    ...mapActions(['setUserName']),
+    ...mapMutations(["setName"]),
     /* Загружаем имя пользователя в state */
-    authorization (userName) {
-      this.setUserName({name: userName})
-      this.$router.push('/test')
+    authorization () {
+      this.setName(this.userName);
+      this.$router.push("/test");
     }
   }
-}
+};
 </script>
 
 <style>
